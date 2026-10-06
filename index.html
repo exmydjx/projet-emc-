@@ -8,441 +8,1699 @@
     <!-- MapLibre GL JS -->
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <header>
-        <div class="logo"><span>RE</span> • IMPACT</div>
-        <nav>
-            <a href="#accueil">Accueil</a>
-            <a href="#quiz">Quiz</a>
-            <a href="#carte">Carte 3D</a>
-            <a href="#admin" onclick="openAdminModal(event)" style="color: var(--cyan); font-weight: bold;">🔒 Admin</a>
-        </nav>
-    </header>
+<header>
+    <div class="logo"><span>RE</span> • IMPACT</div>
 
-    <section id="accueil" class="hero">
-        <div class="hero-content">
-            <p class="small-title">LA RÉUNION • EMC • 2026</p>
-            <h1>Réfléchis.<br><span>Choisis.</span><br>Agis.</h1>
-            <p class="description">Un espace interactif pour comprendre les enjeux de notre territoire et participer à sa réflexion.</p>
-            <a href="#quiz" class="main-button">Commencer le questionnaire →</a>
-        </div>
-        <div class="hero-circle"><div class="circle-inner">🇷🇪</div></div>
-    </section>
+    <nav>
+        <a href="#accueil">Accueil</a>
+        <a href="#quiz">Quiz</a>
+        <a href="#carte">Carte 3D</a>
 
-    <!-- QUIZ -->
-    <section id="quiz" class="section">
-        <div class="section-title">
-            <p>01 — INTERACTIF</p>
-            <h2>Questionnaire</h2>
-            <span>Teste tes connaissances et découvre les explications.</span>
-        </div>
+        <!-- ADMIN -->
+        <a href="#admin"
+           onclick="openAdminModal(event)"
+           style="color: var(--cyan); font-weight: bold;">
+            🔒 Admin
+        </a>
+    </nav>
+</header>
 
-        <div class="quiz-container">
-            <!-- ÉTAPE PSEUDO -->
-            <div id="pseudo-container" style="text-align: center; padding: 20px;">
-                <h3 style="margin-bottom: 15px; color: #fff;">Avant de commencer...</h3>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Entre ton prénom ou ton pseudo pour enregistrer ton score :</p>
-                <input type="text" id="user-pseudo" placeholder="Ton prénom / pseudo..." style="padding: 12px 20px; border-radius: 10px; border: 1px solid var(--purple); background: rgba(255,255,255,0.08); color: white; width: 80%; max-width: 350px; font-size: 16px; outline: none; text-align: center; margin-bottom: 20px;"><br>
-                <button onclick="startQuizWithPseudo()" class="main-button" style="cursor: pointer; border: none;">C'est parti ! →</button>
-            </div>
 
-            <!-- CONTENEUR DU QUIZ (Caché au début) -->
-            <div id="quiz-main-content" class="hidden">
-                <div class="quiz-top">
-                    <div>
-                        <span id="question-number">QUESTION 01</span>
-                        <h3 id="question-title">Chargement...</h3>
-                    </div>
-                    <div class="score-box"> SCORE <strong id="score">0</strong> </div>
-                </div>
+<!-- =========================
+     ACCUEIL
+========================= -->
 
-                <p id="question-subtitle" class="question-subtitle"></p>
+<section id="accueil" class="hero">
 
-                <div id="answers" class="answers"></div>
+    <div class="hero-content">
 
-                <div id="explanation" class="explanation hidden">
-                    <div id="result-icon" style="font-size: 25px;"></div>
-                    <div>
-                        <h4 id="result-title"></h4>
-                        <p id="result-text"></p>
-                    </div>
-                </div>
+        <p class="small-title">
+            LA RÉUNION • EMC • 2026
+        </p>
 
-                <div class="quiz-buttons">
-                    <button id="validate-button" class="validate-button">Valider la réponse</button>
-                    <button id="next-button" class="next-button hidden">Question suivante →</button>
-                </div>
-            </div>
-        </div>
-    </section>
+        <h1>
+            Réfléchis.<br>
+            <span>Choisis.</span><br>
+            Agis.
+        </h1>
 
-    <!-- CARTE 3D MAPLIBRE -->
-    <section id="carte" class="map-section">
-        <div class="section-title">
-            <p>02 — TERRITOIRE</p>
-            <h2>Carte 3D</h2>
-            <span>Cliquez sur un pays</span>
-        </div>
+        <p class="description">
+            Un espace interactif pour comprendre les enjeux de notre territoire
+            et participer à sa réflexion.
+        </p>
 
-        <div class="map-wrapper">
-            <div id="map3d" style="width: 100%; height: 500px;"></div>
+        <a href="#quiz" class="main-button">
+            Commencer le questionnaire →
+        </a>
 
-            <div class="map-info">
-                <span id="map-status">EXPLORATION DU TERRITOIRE</span>
-                <h3 id="city-name">INTERNATIONAL</h3>
-                <p id="city-description">Sélectionnez un pays et voyez l'emploi du temps de chaque pays pour y comparer.</p>
+    </div>
 
-                <div style="margin-top: 10px; margin-bottom: 5px;">
-                    <input 
-                        type="text" 
-                        id="search-input" 
-                        placeholder="Rechercher un lycée ou un pays..." 
-                        oninput="filtrerLycees()"
-                        style="width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid rgba(156, 108, 255, 0.4); background: rgba(255, 255, 255, 0.08); color: white; font-size: 13px; outline: none; box-sizing: border-box;"
-                    />
-                </div>
-
-                <div id="parking-list" class="parking-list"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- MODALE ADMIN (RÉSULTATS PRIVÉS) -->
-    <div id="admin-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: #110f2c; border: 2px solid var(--purple); padding: 30px; border-radius: 16px; width: 90%; max-width: 800px; max-height: 80vh; overflow-y: auto; color: white; position: relative;">
-            <button onclick="closeAdminModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 20px; cursor: pointer;">✕</button>
-            <h3 style="margin-bottom: 20px; color: var(--cyan);">🔒 Espace Administrateur - Résultats Privés</h3>
-            <div id="admin-content">
-                <p>Chargement des résultats...</p>
-            </div>
+    <div class="hero-circle">
+        <div class="circle-inner">
+            🇷🇪
         </div>
     </div>
 
-    <footer>
-        <div><strong>RE • IMPACT</strong><p>Projet EMC — La Réunion</p></div>
-        <div>© 2026 [Dijoux Emy], La Réunion. All rights reserved. </div>
-    </footer>
+</section>
 
-    <!-- SUPABASE -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = "https://dckknlgqjkfjnluhojta.supabase.co";
-        const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Uq9brX8pKgcjshcnc6-bFg_5GMtp1yq";
 
-        const supabaseClient = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-        );
-    </script>
+<!-- =========================
+     QUIZ
+========================= -->
 
-    <!-- SCRIPT QUIZ & SUPABASE LOGIC -->
-    <script>
-    const questions = [
-        {
-            title: "Vrai ou Faux ? Plus on passe d’heures assis en classe par jour, meilleurs sont les résultats scolaires",
-            subtitle: "Sélectionne la réponse qui correspond le mieux à l'engagement citoyen.",
-            correctIndex: 0,
-            explanation: "La Finlande ou l’Estonie ont des journées de cours plus courtes et moins chargées que la France, mais occupent les premières places mondiales aux tests PISA, ça prouve que la quantité ne fait pas la qualité.",
-            answers: ["FAUX.", "VRAI.", "Sa depend.", "Je sais pas"]
-        },
-        {
-            title: "Quel pays d’Europe détient le record des journées de cours quotidiennes les plus longues et les plus chargées pour les élèves ?",
-            subtitle: "Sélectionne la réponse qui correspond le mieux à l'engagement citoyen.",
-            correctIndex: 0,
-            explanation: "La France détient le record des journées de cours les plus longues d’Europe, accumulant 1 142 heures par an à 15 ans avec des cours finissant vers 17h ou 18h, suivis des devoirs.",
-            answers: ["La France.", "Canada.", "La Réunion.", "Chine"]
-        },
-        {
-            title: "Pourquoi le sommeil d’un adolescent fonctionne-t-il différemment de celui d’un enfant ou d’un adulte ?",
-            subtitle: "Identifie l'action collective parmi les choix proposés.",
-            correctIndex: 1,
-            explanation: "Le fonctionnement du sommeil à l'adolescence est dicté par un retard de phase biologique lié à la sécrétion de mélatonine décalée de deux heures.",
-            answers: [
-                "Parce que les adolescents ont besoin de moins de sommeil.",
-                "Parce que leur sécrétion de mélatonine est décalée de deux heures plus tard.",
-                "Parce que leur horloge interne s'inverse complètement.",
-                "Parce que leur cerveau n'accumule plus de fatigue."
-            ]
-        },
-        {
-            title: "La France est classée combien sur la moyenne des lycéens en Europe selon PISA en 2023 ?",
-            subtitle: "Identifie l'action collective parmi les choix proposés.",
-            correctIndex: 1,
-            explanation: "La France se classe généralement autour de la 23e place mondiale parmi les pays participants à l'enquête PISA de l'OCDE.",
-            answers: ["20e", "23e", "1er", "17e"]
-        },
-        {
-            title: "Quelle est la moyenne quotidienne que passent les élèves à l’école en France ?",
-            subtitle: "Identifie l'action collective parmi les choix proposés.",
-            correctIndex: 3,
-            explanation: "En France, les élèves passent en moyenne 6 heures par jour à l'école, avec un rythme très concentré.",
-            answers: ["7:30am", "09:50am", "08:15am", "06:20am"]
-        },
-        {
-            title: "Vrai ou faux, depuis 2012 le niveau scolaire des lycées français est-il en baisse ?",
-            subtitle: "Identifie l'action collective parmi les choix proposés.",
-            correctIndex: 0,
-            explanation: "C'est un fait documenté par les enquêtes PISA de l'OCDE qui montrent une baisse des résultats scolaires des élèves français depuis 2012.",
-            answers: ["Vrai", "Ça dépend", "Faux", "Je ne sais pas"]
-        },
-        {
-            title: "Utiliser son téléphone au lit diminue le temps de sommeil profond, même si on réussit à s'endormir.",
-            subtitle: "Identifie l'action collective parmi les choix proposés.",
-            correctIndex: 2,
-            explanation: "La lumière bleue captée par les yeux bloque la mélatonine, rendant le sommeil plus agité et moins profond.",
-            answers: ["Je ne sais pas", "Faux", "Vrai", "Ça dépend"]
-        },
-        {
-            title: "D’après vous, enchaîner deux heures de cours d'affilée vous paraît une bonne idée ?",
-            correctIndex: 2,
-            explanation: "La capacité d'attention maximale d'un adolescent oscille entre 45 et 50 minutes. Au-delà, la concentration baisse.",
-            answers: [
-                "Non, car les cartables deviennent trop lourds.",
-                "Oui, le cerveau des ados adore rester immobile 2h.",
-                "Non, la concentration baisse après 45 à 50 minutes.",
-                "Oui, on mémorise deux fois mieux sans pause."
-            ]
-        },
-        {
-            title: "C’est quoi PISA ?",
-            subtitle: "Identifie l'action collective parmi les choix proposés.",
-            correctIndex: 2,
-            explanation: "Créé par l'OCDE, ce programme réalise la plus grande étude internationale comparant les systèmes éducatifs mondiaux.",
-            answers: [
-                "Proximal Isovelocity Surface Area.",
-                "Platform-independent Search Assessment.",
-                "Programme for International Student Assessment"
-            ]
-        },
-        {
-            title: "Pensez-vous que les cours de 11h35 à 12h35 sont justes pour les élèves ?",
-            subtitle: "Réfléchis au rôle des places, parcs et jardins publics.",
-            correctIndex: 3,
-            explanation: "Le temps est trop court pour les demi-pensionnaires (queue à la cantine) et les externes (trajet aller-retour rapide).",
-            answers: ["Oui", "Je ne sais pas", "Peut-être", "Non"]
-        }
-    ];
+<section id="quiz" class="section">
 
-    let currentQuestion = 0;
-    let score = 0;
-    let selectedAnswerIndex = null;
-    let isValidated = false;
-    let userPseudo = "";
-    let userDetailedAnswers = [];
+    <div class="section-title">
 
-    function startQuizWithPseudo() {
-        const input = document.getElementById("user-pseudo").value.trim();
-        if (!input) {
-            alert("Veuillez entrer un prénom ou un pseudo valide !");
-            return;
-        }
-        userPseudo = input;
-        document.getElementById("pseudo-container").style.display = "none";
-        document.getElementById("quiz-main-content").classList.remove("hidden");
-        showQuestion();
+        <p>01 — INTERACTIF</p>
+
+        <h2>Questionnaire</h2>
+
+        <span>
+            Teste tes connaissances et découvre les explications.
+        </span>
+
+    </div>
+
+
+    <div class="quiz-container">
+
+        <!--
+            IMPORTANT :
+            Aucun prénom, pseudo ou email n'est demandé.
+            Les réponses sont enregistrées anonymement.
+        -->
+
+        <div id="quiz-main-content">
+
+            <div class="quiz-top">
+
+                <div>
+
+                    <span id="question-number">
+                        QUESTION 01
+                    </span>
+
+                    <h3 id="question-title">
+                        Chargement...
+                    </h3>
+
+                </div>
+
+
+                <div class="score-box">
+
+                    SCORE
+
+                    <strong id="score">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <p id="question-subtitle"
+               class="question-subtitle">
+            </p>
+
+
+            <div id="answers"
+                 class="answers">
+            </div>
+
+
+            <!-- EXPLICATION -->
+
+            <div id="explanation"
+                 class="explanation hidden">
+
+                <div id="result-icon"
+                     style="font-size: 25px;">
+                </div>
+
+                <div>
+
+                    <h4 id="result-title">
+                    </h4>
+
+                    <p id="result-text">
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- BOUTONS -->
+
+            <div class="quiz-buttons">
+
+                <button
+                    id="validate-button"
+                    class="validate-button">
+                    Valider la réponse
+                </button>
+
+                <button
+                    id="next-button"
+                    class="next-button hidden">
+                    Question suivante →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CARTE 3D
+========================= -->
+
+<section id="carte"
+         class="map-section">
+
+    <div class="section-title">
+
+        <p>02 — TERRITOIRE</p>
+
+        <h2>Carte 3D</h2>
+
+        <span>
+            Cliquez sur un pays
+        </span>
+
+    </div>
+
+
+    <div class="map-wrapper">
+
+        <div id="map3d"
+             style="width: 100%; height: 500px;">
+        </div>
+
+
+        <div class="map-info">
+
+            <span id="map-status">
+                EXPLORATION DU TERRITOIRE
+            </span>
+
+
+            <h3 id="city-name">
+                INTERNATIONAL
+            </h3>
+
+
+            <p id="city-description">
+                Sélectionnez un pays et voyez l'emploi du temps
+                de chaque pays pour y comparer.
+            </p>
+
+
+            <div style="margin-top: 10px; margin-bottom: 5px;">
+
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Rechercher un lycée ou un pays..."
+                    oninput="filtrerLycees()"
+                    style="
+                        width: 100%;
+                        padding: 9px 12px;
+                        border-radius: 8px;
+                        border: 1px solid rgba(156,108,255,0.4);
+                        background: rgba(255,255,255,0.08);
+                        color: white;
+                        font-size: 13px;
+                        outline: none;
+                        box-sizing: border-box;
+                    "
+                >
+
+            </div>
+
+
+            <div id="parking-list"
+                 class="parking-list">
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     MODALE ADMIN
+========================= -->
+
+<div id="admin-modal"
+     style="
+        display:none;
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.85);
+        z-index:1000;
+        justify-content:center;
+        align-items:center;
+     ">
+
+    <div
+        style="
+            background:#110f2c;
+            border:2px solid var(--purple);
+            padding:30px;
+            border-radius:16px;
+            width:90%;
+            max-width:800px;
+            max-height:80vh;
+            overflow-y:auto;
+            color:white;
+            position:relative;
+        "
+    >
+
+        <button
+            onclick="closeAdminModal()"
+            style="
+                position:absolute;
+                top:15px;
+                right:15px;
+                background:none;
+                border:none;
+                color:white;
+                font-size:20px;
+                cursor:pointer;
+            "
+        >
+            ✕
+        </button>
+
+
+        <h3
+            style="
+                margin-bottom:20px;
+                color:var(--cyan);
+            "
+        >
+            🔒 Espace Administrateur -
+            Résultats Privés
+        </h3>
+
+
+        <div id="admin-content">
+
+            <p>
+                Connexion administrateur requise.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div>
+
+        <strong>
+            RE • IMPACT
+        </strong>
+
+        <p>
+            Projet EMC — La Réunion
+        </p>
+
+    </div>
+
+
+    <div>
+        © 2026 [Dijoux Emy], La Réunion.
+        All rights reserved.
+    </div>
+
+</footer>
+
+
+<!-- =========================
+     SUPABASE
+========================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://dckknlgqjkfjnluhojta.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_Uq9brX8pKgcjshcnc6-bFg_5GMtp1yq";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+</script>
+
+
+<!-- =========================
+     QUESTIONS
+========================= -->
+
+<script>
+
+const questions = [
+
+    {
+        title:
+        "Vrai ou Faux ? Plus on passe d’heures assis en classe par jour, meilleurs sont les résultats scolaires",
+
+        subtitle:
+        "Sélectionne la réponse qui correspond le mieux à l'engagement citoyen.",
+
+        correctIndex: 0,
+
+        explanation:
+        "La Finlande ou l’Estonie ont des journées de cours plus courtes et moins chargées que la France, mais occupent les premières places mondiales aux tests PISA, ça prouve que la quantité ne fait pas la qualité.",
+
+        answers: [
+            "FAUX.",
+            "VRAI.",
+            "Sa depend.",
+            "Je sais pas"
+        ]
+    },
+
+
+    {
+        title:
+        "Quel pays d’Europe détient le record des journées de cours quotidiennes les plus longues et les plus chargées pour les élèves ?",
+
+        subtitle:
+        "Sélectionne la réponse qui correspond le mieux à l'engagement citoyen.",
+
+        correctIndex: 0,
+
+        explanation:
+        "La France détient le record des journées de cours les plus longues d’Europe, accumulant 1 142 heures par an à 15 ans avec des cours finissant vers 17h ou 18h, suivis des devoirs.",
+
+        answers: [
+            "La France.",
+            "Canada.",
+            "La Réunion.",
+            "Chine"
+        ]
+    },
+
+
+    {
+        title:
+        "Pourquoi le sommeil d’un adolescent fonctionne-t-il différemment de celui d’un enfant ou d’un adulte ?",
+
+        subtitle:
+        "Identifie l'action collective parmi les choix proposés.",
+
+        correctIndex: 1,
+
+        explanation:
+        "Le fonctionnement du sommeil à l'adolescence est dicté par un retard de phase biologique lié à la sécrétion de mélatonine décalée de deux heures.",
+
+        answers: [
+            "Parce que les adolescents ont besoin de moins de sommeil.",
+
+            "Parce que leur sécrétion de mélatonine est décalée de deux heures plus tard.",
+
+            "Parce que leur horloge interne s'inverse complètement.",
+
+            "Parce que leur cerveau n'accumule plus de fatigue."
+        ]
+    },
+
+
+    {
+        title:
+        "La France est classée combien sur la moyenne des lycéens en Europe selon PISA en 2023 ?",
+
+        subtitle:
+        "Identifie l'action collective parmi les choix proposés.",
+
+        correctIndex: 1,
+
+        explanation:
+        "La France se classe généralement autour de la 23e place mondiale parmi les pays participants à l'enquête PISA de l'OCDE.",
+
+        answers: [
+            "20e",
+            "23e",
+            "1er",
+            "17e"
+        ]
+    },
+
+
+    {
+        title:
+        "Quelle est la moyenne quotidienne que passent les élèves à l’école en France ?",
+
+        subtitle:
+        "Identifie l'action collective parmi les choix proposés.",
+
+        correctIndex: 3,
+
+        explanation:
+        "En France, les élèves passent en moyenne 6 heures par jour à l'école, avec un rythme très concentré.",
+
+        answers: [
+            "7:30am",
+            "09:50am",
+            "08:15am",
+            "06:20am"
+        ]
+    },
+
+
+    {
+        title:
+        "Vrai ou faux, depuis 2012 le niveau scolaire des lycées français est-il en baisse ?",
+
+        subtitle:
+        "Identifie l'action collective parmi les choix proposés.",
+
+        correctIndex: 0,
+
+        explanation:
+        "C'est un fait documenté par les enquêtes PISA de l'OCDE qui montrent une baisse des résultats scolaires des élèves français depuis 2012.",
+
+        answers: [
+            "Vrai",
+            "Ça dépend",
+            "Faux",
+            "Je ne sais pas"
+        ]
+    },
+
+
+    {
+        title:
+        "Utiliser son téléphone au lit diminue le temps de sommeil profond, même si on réussit à s'endormir.",
+
+        subtitle:
+        "Identifie l'action collective parmi les choix proposés.",
+
+        correctIndex: 2,
+
+        explanation:
+        "La lumière bleue captée par les yeux bloque la mélatonine, rendant le sommeil plus agité et moins profond.",
+
+        answers: [
+            "Je ne sais pas",
+            "Faux",
+            "Vrai",
+            "Ça dépend"
+        ]
+    },
+
+
+    {
+        title:
+        "D’après vous, enchaîner deux heures de cours d'affilée vous paraît une bonne idée ?",
+
+        correctIndex: 2,
+
+        explanation:
+        "La capacité d'attention maximale d'un adolescent oscille entre 45 et 50 minutes. Au-delà, la concentration baisse.",
+
+        answers: [
+            "Non, car les cartables deviennent trop lourds.",
+            "Oui, le cerveau des ados adore rester immobile 2h.",
+            "Non, la concentration baisse après 45 à 50 minutes.",
+            "Oui, on mémorise deux fois mieux sans pause."
+        ]
+    },
+
+
+    {
+        title:
+        "C’est quoi PISA ?",
+
+        subtitle:
+        "Identifie l'action collective parmi les choix proposés.",
+
+        correctIndex: 2,
+
+        explanation:
+        "Créé par l'OCDE, ce programme réalise la plus grande étude internationale comparant les systèmes éducatifs mondiaux.",
+
+        answers: [
+            "Proximal Isovelocity Surface Area.",
+            "Platform-independent Search Assessment.",
+            "Programme for International Student Assessment"
+        ]
+    },
+
+
+    {
+        title:
+        "Pensez-vous que les cours de 11h35 à 12h35 sont justes pour les élèves ?",
+
+        subtitle:
+        "Réfléchis au rôle des places, parcs et jardins publics.",
+
+        correctIndex: 3,
+
+        explanation:
+        "Le temps est trop court pour les demi-pensionnaires (queue à la cantine) et les externes (trajet aller-retour rapide).",
+
+        answers: [
+            "Oui",
+            "Je ne sais pas",
+            "Peut-être",
+            "Non"
+        ]
     }
 
-    function showQuestion() {
-        const q = questions[currentQuestion];
-        selectedAnswerIndex = null;
-        isValidated = false;
+];
 
-        document.getElementById("question-number").textContent = "QUESTION " + String(currentQuestion + 1).padStart(2, "0");
-        document.getElementById("question-title").textContent = q.title;
-        document.getElementById("question-subtitle").textContent = q.subtitle;
 
-        const answersBox = document.getElementById("answers");
-        answersBox.innerHTML = "";
+let currentQuestion = 0;
 
-        document.getElementById("explanation").classList.add("hidden");
-        document.getElementById("next-button").classList.add("hidden");
-        document.getElementById("validate-button").classList.remove("hidden");
+let score = 0;
 
-        q.answers.forEach((text, idx) => {
-            const div = document.createElement("div");
-            div.className = "answer";
+let selectedAnswerIndex = null;
+
+let isValidated = false;
+
+let userDetailedAnswers = [];
+
+
+/* =========================
+   AFFICHER UNE QUESTION
+========================= */
+
+function showQuestion() {
+
+    const q =
+        questions[currentQuestion];
+
+
+    selectedAnswerIndex = null;
+
+    isValidated = false;
+
+
+    document.getElementById(
+        "question-number"
+    ).textContent =
+        "QUESTION " +
+        String(currentQuestion + 1)
+        .padStart(2, "0");
+
+
+    document.getElementById(
+        "question-title"
+    ).textContent =
+        q.title;
+
+
+    document.getElementById(
+        "question-subtitle"
+    ).textContent =
+        q.subtitle || "";
+
+
+    const answersBox =
+        document.getElementById("answers");
+
+
+    answersBox.innerHTML = "";
+
+
+    document.getElementById(
+        "explanation"
+    ).classList.add("hidden");
+
+
+    document.getElementById(
+        "next-button"
+    ).classList.add("hidden");
+
+
+    document.getElementById(
+        "validate-button"
+    ).classList.remove("hidden");
+
+
+    q.answers.forEach(
+        (answer, index) => {
+
+            const div =
+                document.createElement("div");
+
+
+            div.className =
+                "answer";
+
+
             div.innerHTML = `
+
                 <div class="checkbox"></div>
-                <div class="answer-text">${text}</div>
+
+                <div class="answer-text">
+                    ${answer}
+                </div>
+
             `;
 
+
             div.onclick = function () {
-                if (isValidated) return;
-                document.querySelectorAll(".answer").forEach(el => el.classList.remove("selected"));
+
+                if (isValidated)
+                    return;
+
+
+                document
+                    .querySelectorAll(".answer")
+                    .forEach(el =>
+                        el.classList.remove("selected")
+                    );
+
+
                 div.classList.add("selected");
-                selectedAnswerIndex = idx;
+
+
+                selectedAnswerIndex =
+                    index;
+
             };
+
+
             answersBox.appendChild(div);
-        });
+
+        }
+    );
+
+}
+
+
+/* =========================
+   VALIDER UNE RÉPONSE
+========================= */
+
+async function handleValidation() {
+
+    if (selectedAnswerIndex === null) {
+
+        alert(
+            "Veuillez choisir une réponse !"
+        );
+
+        return;
     }
 
-    function handleValidation() {
-        if (selectedAnswerIndex === null) {
-            alert("Veuillez choisir une réponse !");
-            return;
+
+    if (isValidated)
+        return;
+
+
+    isValidated = true;
+
+
+    const q =
+        questions[currentQuestion];
+
+
+    const answersList =
+        document.querySelectorAll(".answer");
+
+
+    answersList.forEach(
+        (element, index) => {
+
+            if (
+                index === q.correctIndex
+            ) {
+
+                element.classList.add(
+                    "correct"
+                );
+
+            }
+
+
+            if (
+                index === selectedAnswerIndex &&
+                index !== q.correctIndex
+            ) {
+
+                element.classList.add(
+                    "wrong"
+                );
+
+            }
+
         }
-        if (isValidated) return;
-        isValidated = true;
+    );
 
-        const q = questions[currentQuestion];
-        const answersList = document.querySelectorAll(".answer");
 
-        answersList.forEach((el, idx) => {
-            if (idx === q.correctIndex) el.classList.add("correct");
-            if (idx === selectedAnswerIndex && idx !== q.correctIndex) el.classList.add("wrong");
-        });
+    const isCorrect =
+        selectedAnswerIndex ===
+        q.correctIndex;
 
-        const isCorrect = selectedAnswerIndex === q.correctIndex;
-        
-        userDetailedAnswers.push({
-            question: q.title,
-            reponseDonnee: q.answers[selectedAnswerIndex],
-            estCorrect: isCorrect
-        });
 
-        if (isCorrect) {
-            score++;
-            document.getElementById("score").textContent = score;
-            document.getElementById("result-icon").textContent = "✓";
-            document.getElementById("result-title").textContent = "Excellente réponse !";
-            document.getElementById("result-title").style.color = "#32d583";
-        } else {
-            document.getElementById("result-icon").textContent = "✕";
-            document.getElementById("result-title").textContent = "Mauvaise réponse";
-            document.getElementById("result-title").style.color = "#ff5c7a";
-        }
+    /* =========================
+       ENREGISTREMENT ANONYME
+    ========================= */
 
-        document.getElementById("result-text").textContent = q.explanation;
-        document.getElementById("explanation").classList.remove("hidden");
-        document.getElementById("validate-button").classList.add("hidden");
-        document.getElementById("next-button").classList.remove("hidden");
-    }
+    enregistrerReponse(
+        currentQuestion + 1,
+        q.answers[selectedAnswerIndex]
+    );
 
-    function handleNext() {
-        currentQuestion++;
-        if (currentQuestion < questions.length) {
-            showQuestion();
-        } else {
-            showEndScreen();
-        }
-    }
 
-    async function showEndScreen() {
-        document.getElementById("question-number").textContent = "FIN DU QUIZ";
-        document.getElementById("question-title").textContent = "Résultats du questionnaire";
-        document.getElementById("question-subtitle").textContent = "";
-        document.getElementById("answers").innerHTML = `
-            <div class="answer selected" style="justify-content: center; text-align: center; border-color: #9c6cff;">
-                <div class="answer-text">
-                    Félicitations ${userPseudo} ! Tu as obtenu un score de <strong style="color: #9c6cff; font-size: 20px;">${score} / ${questions.length}</strong> !
-                </div>
-            </div>
-        `;
-        document.getElementById("explanation").classList.add("hidden");
-        document.getElementById("validate-button").classList.add("hidden");
-        
-        const nextBtn = document.getElementById("next-button");
-        nextBtn.textContent = "Recommencer le Quiz ↺";
-        nextBtn.classList.remove("hidden");
-        nextBtn.onclick = () => location.reload();
+    userDetailedAnswers.push({
 
-        try {
-            const { error } = await supabaseClient
-                .from('quiz_reponses')
-                .insert([
-                    { 
-                        pseudo: userPseudo, 
-                        score_final: score, 
-                        details_reponses: userDetailedAnswers 
-                    }
-                ]);
-            if (error) console.error("Erreur d'enregistrement Supabase :", error);
-        } catch (err) {
-            console.error("Erreur réseau Supabase :", err);
-        }
-    }
+        question_id:
+            currentQuestion + 1,
 
-    // Association directe des boutons au chargement de la page
-    document.addEventListener("DOMContentLoaded", () => {
-        const validateBtn = document.getElementById("validate-button");
-        const nextBtn = document.getElementById("next-button");
+        reponse:
+            q.answers[selectedAnswerIndex],
 
-        if (validateBtn) {
-            validateBtn.addEventListener("click", handleValidation);
-        }
-        if (nextBtn) {
-            nextBtn.addEventListener("click", () => {
-                // Si on n'est pas sur l'écran de fin (où le bouton a déjà un onclick de rechargement)
-                if (currentQuestion < questions.length) {
-                    handleNext();
-                }
-            });
-        }
+        estCorrect:
+            isCorrect
+
     });
 
-    // Gestion du panneau Admin privé
-    async function openAdminModal(e) {
-        e.preventDefault();
-        const pin = prompt("Entrez le mot de passe administrateur :");
-        if (pin !== "emy2026") {
-            alert("Accès refusé !");
-            return;
-        }
 
-        const modal = document.getElementById("admin-modal");
-        const content = document.getElementById("admin-content");
-        modal.style.display = "flex";
-        content.innerHTML = "<p>Chargement des données Supabase...</p>";
+    if (isCorrect) {
 
-        try {
-            const { data, error } = await supabaseClient
-                .from('quiz_reponses')
-                .select('*')
-                .order('created_at', { ascending: false });
+        score++;
 
-            if (error) {
-                content.innerHTML = `<p style="color: red;">Erreur : ${error.message}</p>`;
-                return;
-            }
 
-            if (!data || data.length === 0) {
-                content.innerHTML = "<p>Aucun résultat enregistré pour le moment.</p>";
-                return;
-            }
+        document.getElementById(
+            "score"
+        ).textContent =
+            score;
 
-            let html = `<p style="margin-bottom:15px; color: var(--emerald);"><b>Total de participants : ${data.length}</b></p>`;
-            html += `<table style="width:100%; border-collapse: collapse; font-size: 13px;">
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2); text-align:left;">
-                    <th style="padding:8px;">Date</th>
-                    <th style="padding:8px;">Pseudo</th>
-                    <th style="padding:8px;">Score</th>
-                </tr>`;
 
-            data.forEach(row => {
-                const dateFormatee = new Date(row.created_at).toLocaleString('fr-FR');
-                html += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding:8px; color:#aaa;">${dateFormatee}</td>
-                    <td style="padding:8px; font-weight:bold;">${row.pseudo}</td>
-                    <td style="padding:8px; color:var(--purple);">${row.score_final} / 10</td>
-                </tr>`;
+        document.getElementById(
+            "result-icon"
+        ).textContent =
+            "✓";
+
+
+        document.getElementById(
+            "result-title"
+        ).textContent =
+            "Excellente réponse !";
+
+
+        document.getElementById(
+            "result-title"
+        ).style.color =
+            "#32d583";
+
+    }
+
+    else {
+
+        document.getElementById(
+            "result-icon"
+        ).textContent =
+            "✕";
+
+
+        document.getElementById(
+            "result-title"
+        ).textContent =
+            "Mauvaise réponse";
+
+
+        document.getElementById(
+            "result-title"
+        ).style.color =
+            "#ff5c7a";
+
+    }
+
+
+    document.getElementById(
+        "result-text"
+    ).textContent =
+        q.explanation;
+
+
+    document.getElementById(
+        "explanation"
+    ).classList.remove("hidden");
+
+
+    document.getElementById(
+        "validate-button"
+    ).classList.add("hidden");
+
+
+    document.getElementById(
+        "next-button"
+    ).classList.remove("hidden");
+
+}
+
+
+/* =========================
+   QUESTION SUIVANTE
+========================= */
+
+function handleNext() {
+
+    currentQuestion++;
+
+
+    if (
+        currentQuestion <
+        questions.length
+    ) {
+
+        showQuestion();
+
+    }
+
+    else {
+
+        showEndScreen();
+
+    }
+
+}
+
+
+/* =========================
+   FIN DU QUIZ
+========================= */
+
+function showEndScreen() {
+
+    document.getElementById(
+        "question-number"
+    ).textContent =
+        "FIN DU QUIZ";
+
+
+    document.getElementById(
+        "question-title"
+    ).textContent =
+        "Résultats du questionnaire";
+
+
+    document.getElementById(
+        "question-subtitle"
+    ).textContent =
+        "Merci d'avoir participé !";
+
+
+    document.getElementById(
+        "answers"
+    ).innerHTML = `
+
+        <div
+            class="answer selected"
+            style="
+                justify-content:center;
+                text-align:center;
+                border-color:#9c6cff;
+            "
+        >
+
+            <div class="answer-text">
+
+                Ton score :
+
+                <strong
+                    style="
+                        color:#9c6cff;
+                        font-size:20px;
+                    "
+                >
+                    ${score} / ${questions.length}
+                </strong>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.getElementById(
+        "explanation"
+    ).classList.add("hidden");
+
+
+    document.getElementById(
+        "validate-button"
+    ).classList.add("hidden");
+
+
+    const nextButton =
+        document.getElementById(
+            "next-button"
+        );
+
+
+    nextButton.textContent =
+        "Recommencer le Quiz ↺";
+
+
+    nextButton.classList.remove(
+        "hidden"
+    );
+
+
+    nextButton.onclick =
+        () => location.reload();
+
+}
+
+
+/* =========================
+   DÉMARRAGE
+========================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        showQuestion();
+
+
+        document
+            .getElementById(
+                "validate-button"
+            )
+            .addEventListener(
+                "click",
+                handleValidation
+            );
+
+
+        document
+            .getElementById(
+                "next-button"
+            )
+            .addEventListener(
+                "click",
+                handleNext
+            );
+
+    }
+);
+
+<!-- =====================================================
+     PARTIE 2 — SUPABASE + ADMIN + RÉSULTATS
+===================================================== -->
+
+<script>
+
+/* =====================================================
+   ENREGISTRER UNE RÉPONSE ANONYME
+===================================================== */
+
+async function enregistrerReponse(questionId, reponse) {
+
+    try {
+
+        const { error } = await supabaseClient
+
+            .from("reponses_questionnaire")
+
+            .insert({
+
+                question_id: questionId,
+
+                reponse: reponse
+
             });
-            html += `</table>`;
-            content.innerHTML = html;
 
-        } catch (err) {
-            content.innerHTML = `<p style="color: red;">Erreur de connexion : ${err.message}</p>`;
+
+        if (error) {
+
+            console.error(
+                "Erreur d'enregistrement Supabase :",
+                error
+            );
+
         }
+
+    } catch (erreur) {
+
+        console.error(
+            "Erreur de connexion à Supabase :",
+            erreur
+        );
+
     }
 
-    function closeAdminModal() {
-        document.getElementById("admin-modal").style.display = "none";
-    }
-    </script>
+}
 
-    <!-- Script de la carte -->
-    <script src="map.js"></script>
+
+/* =====================================================
+   OUVRIR L'ESPACE ADMIN
+===================================================== */
+
+async function openAdminModal(event) {
+
+    event.preventDefault();
+
+
+    /*
+       On demande les identifiants du compte
+       administrateur Supabase.
+
+       IMPORTANT :
+       ce n'est PAS un mot de passe écrit dans
+       le code du site.
+    */
+
+    const email = prompt(
+        "Adresse e-mail administrateur :"
+    );
+
+
+    if (!email) {
+
+        return;
+
+    }
+
+
+    const password = prompt(
+        "Mot de passe administrateur :"
+    );
+
+
+    if (!password) {
+
+        return;
+
+    }
+
+
+    /* =================================================
+       CONNEXION SUPABASE
+    ================================================= */
+
+    const { data: connexion, error: erreurConnexion } =
+
+        await supabaseClient.auth.signInWithPassword({
+
+            email: email,
+
+            password: password
+
+        });
+
+
+    if (erreurConnexion) {
+
+        alert(
+            "Connexion refusée.\n\n" +
+            erreurConnexion.message
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       OUVERTURE DE LA FENÊTRE
+    ================================================= */
+
+    const modal =
+        document.getElementById(
+            "admin-modal"
+        );
+
+
+    const contenu =
+        document.getElementById(
+            "admin-content"
+        );
+
+
+    modal.style.display = "flex";
+
+
+    contenu.innerHTML = `
+
+        <p style="color:var(--cyan);">
+
+            🔄 Chargement des résultats...
+
+        </p>
+
+    `;
+
+
+    /* =================================================
+       RÉCUPÉRATION DES RÉPONSES
+    ================================================= */
+
+    const { data, error } =
+
+        await supabaseClient
+
+            .from("reponses_questionnaire")
+
+            .select(
+                "question_id, reponse, created_at"
+            )
+
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (error) {
+
+        contenu.innerHTML = `
+
+            <p style="color:#ff5c7a;">
+
+                ❌ Impossible de récupérer
+                les résultats.
+
+            </p>
+
+            <p style="font-size:13px;color:#aaa;">
+
+                ${escapeHtml(error.message)}
+
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* =================================================
+       AUCUNE RÉPONSE
+    ================================================= */
+
+    if (!data || data.length === 0) {
+
+        contenu.innerHTML = `
+
+            <p>
+
+                Aucune réponse enregistrée
+                pour le moment.
+
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* =================================================
+       CALCUL DU NOMBRE DE PARTICIPANTS
+       
+       Chaque personne répond à 10 questions.
+       Donc :
+       
+       nombre de participants =
+       nombre total de réponses / nombre de questions
+    ================================================= */
+
+    const nombreQuestions =
+        questions.length;
+
+
+    const nombreParticipants =
+        Math.floor(
+            data.length / nombreQuestions
+        );
+
+
+    /* =================================================
+       ORGANISER LES RÉPONSES PAR QUESTION
+    ================================================= */
+
+    const resultatsParQuestion = {};
+
+
+    data.forEach(
+        ligne => {
+
+            const questionId =
+                ligne.question_id;
+
+
+            if (
+                !resultatsParQuestion[
+                    questionId
+                ]
+            ) {
+
+                resultatsParQuestion[
+                    questionId
+                ] = {};
+
+            }
+
+
+            const reponse =
+                ligne.reponse;
+
+
+            if (
+                !resultatsParQuestion[
+                    questionId
+                ][reponse]
+            ) {
+
+                resultatsParQuestion[
+                    questionId
+                ][reponse] = 0;
+
+            }
+
+
+            resultatsParQuestion[
+                questionId
+            ][reponse]++;
+
+        }
+    );
+
+
+    /* =================================================
+       CONSTRUCTION DES RÉSULTATS
+    ================================================= */
+
+    let html = `
+
+        <div
+            style="
+                padding:18px;
+                margin-bottom:25px;
+                border-radius:12px;
+                background:rgba(156,108,255,0.10);
+                border:1px solid rgba(156,108,255,0.30);
+            "
+        >
+
+            <p
+                style="
+                    margin:0;
+                    color:var(--cyan);
+                    font-size:13px;
+                "
+            >
+                PARTICIPANTS
+            </p>
+
+
+            <strong
+                style="
+                    font-size:30px;
+                    color:white;
+                "
+            >
+                ${nombreParticipants}
+            </strong>
+
+
+            <p
+                style="
+                    margin-top:5px;
+                    color:#aaa;
+                    font-size:12px;
+                "
+            >
+                ${data.length} réponses enregistrées
+            </p>
+
+        </div>
+
+    `;
+
+
+    /* =================================================
+       AFFICHER CHAQUE QUESTION
+    ================================================= */
+
+    Object.keys(resultatsParQuestion)
+
+        .sort(
+            (a, b) =>
+                Number(a) - Number(b)
+        )
+
+        .forEach(
+            questionId => {
+
+                const question =
+                    questions[
+                        Number(questionId) - 1
+                    ];
+
+
+                if (!question) {
+
+                    return;
+
+                }
+
+
+                const reponses =
+                    resultatsParQuestion[
+                        questionId
+                    ];
+
+
+                const totalQuestion =
+                    Object.values(
+                        reponses
+                    ).reduce(
+                        (
+                            total,
+                            nombre
+                        ) =>
+                            total + nombre,
+                        0
+                    );
+
+
+                html += `
+
+                    <div
+                        style="
+                            margin-bottom:25px;
+                            padding:20px;
+                            border-radius:12px;
+                            border:1px solid
+                                rgba(
+                                    255,
+                                    255,
+                                    255,
+                                    0.10
+                                );
+                        "
+                    >
+
+                        <p
+                            style="
+                                color:var(--cyan);
+                                font-size:12px;
+                                margin-bottom:8px;
+                            "
+                        >
+                            QUESTION
+                            ${String(questionId)
+                                .padStart(2, "0")}
+                        </p>
+
+
+                        <h4
+                            style="
+                                color:white;
+                                margin-bottom:18px;
+                                line-height:1.4;
+                            "
+                        >
+                            ${escapeHtml(
+                                question.title
+                            )}
+                        </h4>
+
+                `;
+
+
+                /* =====================================
+                   CHAQUE RÉPONSE
+                ===================================== */
+
+                Object.entries(
+                    reponses
+                )
+
+                .sort(
+                    (a, b) =>
+                        b[1] - a[1]
+                )
+
+                .forEach(
+                    ([reponse, nombre]) => {
+
+                        const pourcentage =
+                            Math.round(
+                                (
+                                    nombre /
+                                    totalQuestion
+                                ) * 100
+                            );
+
+
+                        html += `
+
+                            <div
+                                style="
+                                    margin-bottom:15px;
+                                "
+                            >
+
+                                <div
+                                    style="
+                                        display:flex;
+                                        justify-content:
+                                            space-between;
+                                        gap:10px;
+                                        margin-bottom:6px;
+                                    "
+                                >
+
+                                    <span
+                                        style="
+                                            color:#eee;
+                                            font-size:13px;
+                                        "
+                                    >
+                                        ${escapeHtml(
+                                            reponse
+                                        )}
+                                    </span>
+
+
+                                    <strong
+                                        style="
+                                            color:
+                                                var(--purple);
+                                            white-space:
+                                                nowrap;
+                                        "
+                                    >
+                                        ${nombre}
+                                        —
+                                        ${pourcentage}%
+                                    </strong>
+
+                                </div>
+
+
+                                <div
+                                    style="
+                                        width:100%;
+                                        height:7px;
+                                        background:
+                                            rgba(
+                                                255,
+                                                255,
+                                                255,
+                                                0.08
+                                            );
+                                        border-radius:
+                                            20px;
+                                        overflow:hidden;
+                                    "
+                                >
+
+                                    <div
+                                        style="
+                                            width:
+                                                ${pourcentage}%;
+                                            height:100%;
+                                            background:
+                                                var(--purple);
+                                            border-radius:
+                                                20px;
+                                        "
+                                    >
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        `;
+
+                    }
+                );
+
+
+                html += `
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+    /* =================================================
+       BOUTON DÉCONNEXION
+    ================================================= */
+
+    html += `
+
+        <button
+            onclick="deconnecterAdmin()"
+            style="
+                width:100%;
+                padding:12px;
+                border:none;
+                border-radius:10px;
+                cursor:pointer;
+                background:
+                    rgba(255,92,122,0.15);
+                color:#ff5c7a;
+                border:
+                    1px solid
+                    rgba(255,92,122,0.30);
+                font-weight:bold;
+            "
+        >
+            🔓 Se déconnecter
+        </button>
+
+    `;
+
+
+    contenu.innerHTML = html;
+
+}
+
+
+/* =====================================================
+   FERMER LA FENÊTRE ADMIN
+===================================================== */
+
+function closeAdminModal() {
+
+    document.getElementById(
+        "admin-modal"
+    ).style.display = "none";
+
+}
+
+
+/* =====================================================
+   DÉCONNEXION ADMIN
+===================================================== */
+
+async function deconnecterAdmin() {
+
+    await supabaseClient.auth.signOut();
+
+
+    closeAdminModal();
+
+
+    alert(
+        "Vous êtes maintenant déconnecté."
+    );
+
+}
+
+
+/* =====================================================
+   PROTECTION CONTRE LE HTML
+===================================================== */
+
+function escapeHtml(texte) {
+
+    return String(texte)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+</script>
+
+
+<!-- =====================================================
+     CARTE
+===================================================== -->
+
+<script src="map.js"></script>
+
+
 </body>
 </html>
