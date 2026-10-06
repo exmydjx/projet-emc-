@@ -7,7 +7,7 @@
 
     <!-- MapLibre GL JS -->
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
-    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -92,7 +92,6 @@
     <div class="quiz-container">
 
         <!--
-            IMPORTANT :
             Aucun prénom, pseudo ou email n'est demandé.
             Les réponses sont enregistrées anonymement.
         -->
@@ -453,11 +452,8 @@ const questions = [
 
         answers: [
             "Parce que les adolescents ont besoin de moins de sommeil.",
-
             "Parce que leur sécrétion de mélatonine est décalée de deux heures plus tard.",
-
             "Parce que leur horloge interne s'inverse complètement.",
-
             "Parce que leur cerveau n'accumule plus de fatigue."
         ]
     },
@@ -609,13 +605,9 @@ const questions = [
 
 
 let currentQuestion = 0;
-
 let score = 0;
-
 let selectedAnswerIndex = null;
-
 let isValidated = false;
-
 let userDetailedAnswers = [];
 
 
@@ -625,56 +617,41 @@ let userDetailedAnswers = [];
 
 function showQuestion() {
 
-    const q =
-        questions[currentQuestion];
-
+    const q = questions[currentQuestion];
 
     selectedAnswerIndex = null;
-
     isValidated = false;
-
 
     document.getElementById(
         "question-number"
     ).textContent =
         "QUESTION " +
-        String(currentQuestion + 1)
-        .padStart(2, "0");
-
+        String(currentQuestion + 1).padStart(2, "0");
 
     document.getElementById(
         "question-title"
-    ).textContent =
-        q.title;
-
+    ).textContent = q.title;
 
     document.getElementById(
         "question-subtitle"
-    ).textContent =
-        q.subtitle || "";
-
+    ).textContent = q.subtitle || "";
 
     const answersBox =
         document.getElementById("answers");
 
-
     answersBox.innerHTML = "";
-
 
     document.getElementById(
         "explanation"
     ).classList.add("hidden");
 
-
     document.getElementById(
         "next-button"
     ).classList.add("hidden");
 
-
     document.getElementById(
         "validate-button"
     ).classList.remove("hidden");
-
 
     q.answers.forEach(
         (answer, index) => {
@@ -682,27 +659,20 @@ function showQuestion() {
             const div =
                 document.createElement("div");
 
-
-            div.className =
-                "answer";
-
+            div.className = "answer";
 
             div.innerHTML = `
-
                 <div class="checkbox"></div>
 
                 <div class="answer-text">
                     ${answer}
                 </div>
-
             `;
-
 
             div.onclick = function () {
 
                 if (isValidated)
                     return;
-
 
                 document
                     .querySelectorAll(".answer")
@@ -710,15 +680,11 @@ function showQuestion() {
                         el.classList.remove("selected")
                     );
 
-
                 div.classList.add("selected");
 
-
-                selectedAnswerIndex =
-                    index;
+                selectedAnswerIndex = index;
 
             };
-
 
             answersBox.appendChild(div);
 
@@ -743,21 +709,16 @@ async function handleValidation() {
         return;
     }
 
-
     if (isValidated)
         return;
 
-
     isValidated = true;
-
 
     const q =
         questions[currentQuestion];
 
-
     const answersList =
         document.querySelectorAll(".answer");
-
 
     answersList.forEach(
         (element, index) => {
@@ -771,7 +732,6 @@ async function handleValidation() {
                 );
 
             }
-
 
             if (
                 index === selectedAnswerIndex &&
@@ -787,10 +747,8 @@ async function handleValidation() {
         }
     );
 
-
     const isCorrect =
-        selectedAnswerIndex ===
-        q.correctIndex;
+        selectedAnswerIndex === q.correctIndex;
 
 
     /* =========================
@@ -821,24 +779,18 @@ async function handleValidation() {
 
         score++;
 
-
         document.getElementById(
             "score"
-        ).textContent =
-            score;
-
+        ).textContent = score;
 
         document.getElementById(
             "result-icon"
-        ).textContent =
-            "✓";
-
+        ).textContent = "✓";
 
         document.getElementById(
             "result-title"
         ).textContent =
             "Excellente réponse !";
-
 
         document.getElementById(
             "result-title"
@@ -851,15 +803,12 @@ async function handleValidation() {
 
         document.getElementById(
             "result-icon"
-        ).textContent =
-            "✕";
-
+        ).textContent = "✕";
 
         document.getElementById(
             "result-title"
         ).textContent =
             "Mauvaise réponse";
-
 
         document.getElementById(
             "result-title"
@@ -874,16 +823,13 @@ async function handleValidation() {
     ).textContent =
         q.explanation;
 
-
     document.getElementById(
         "explanation"
     ).classList.remove("hidden");
 
-
     document.getElementById(
         "validate-button"
     ).classList.add("hidden");
-
 
     document.getElementById(
         "next-button"
@@ -899,7 +845,6 @@ async function handleValidation() {
 function handleNext() {
 
     currentQuestion++;
-
 
     if (
         currentQuestion <
@@ -930,18 +875,15 @@ function showEndScreen() {
     ).textContent =
         "FIN DU QUIZ";
 
-
     document.getElementById(
         "question-title"
     ).textContent =
         "Résultats du questionnaire";
 
-
     document.getElementById(
         "question-subtitle"
     ).textContent =
         "Merci d'avoir participé !";
-
 
     document.getElementById(
         "answers"
@@ -975,31 +917,25 @@ function showEndScreen() {
 
     `;
 
-
     document.getElementById(
         "explanation"
     ).classList.add("hidden");
 
-
     document.getElementById(
         "validate-button"
     ).classList.add("hidden");
-
 
     const nextButton =
         document.getElementById(
             "next-button"
         );
 
-
     nextButton.textContent =
         "Recommencer le Quiz ↺";
-
 
     nextButton.classList.remove(
         "hidden"
     );
-
 
     nextButton.onclick =
         () => location.reload();
@@ -1017,7 +953,6 @@ document.addEventListener(
 
         showQuestion();
 
-
         document
             .getElementById(
                 "validate-button"
@@ -1026,7 +961,6 @@ document.addEventListener(
                 "click",
                 handleValidation
             );
-
 
         document
             .getElementById(
@@ -1040,6 +974,9 @@ document.addEventListener(
     }
 );
 
+</script>
+
+
 <!-- =====================================================
      PARTIE 2 — SUPABASE + ADMIN + RÉSULTATS
 ===================================================== -->
@@ -1050,21 +987,27 @@ document.addEventListener(
    ENREGISTRER UNE RÉPONSE ANONYME
 ===================================================== */
 
-async function enregistrerReponse(questionId, reponse) {
+async function enregistrerReponse(
+    questionId,
+    reponse
+) {
 
     try {
 
-        const { error } = await supabaseClient
+        const { error } =
+            await supabaseClient
+                .from(
+                    "reponses_questionnaire"
+                )
+                .insert({
 
-            .from("reponses_questionnaire")
+                    question_id:
+                        questionId,
 
-            .insert({
+                    reponse:
+                        reponse
 
-                question_id: questionId,
-
-                reponse: reponse
-
-            });
+                });
 
 
         if (error) {
@@ -1076,7 +1019,9 @@ async function enregistrerReponse(questionId, reponse) {
 
         }
 
-    } catch (erreur) {
+    }
+
+    catch (erreur) {
 
         console.error(
             "Erreur de connexion à Supabase :",
@@ -1096,15 +1041,6 @@ async function openAdminModal(event) {
 
     event.preventDefault();
 
-
-    /*
-       On demande les identifiants du compte
-       administrateur Supabase.
-
-       IMPORTANT :
-       ce n'est PAS un mot de passe écrit dans
-       le code du site.
-    */
 
     const email = prompt(
         "Adresse e-mail administrateur :"
@@ -1134,8 +1070,10 @@ async function openAdminModal(event) {
        CONNEXION SUPABASE
     ================================================= */
 
-    const { data: connexion, error: erreurConnexion } =
-
+    const {
+        data: connexion,
+        error: erreurConnexion
+    } =
         await supabaseClient.auth.signInWithPassword({
 
             email: email,
@@ -1166,22 +1104,17 @@ async function openAdminModal(event) {
             "admin-modal"
         );
 
-
     const contenu =
         document.getElementById(
             "admin-content"
         );
 
-
     modal.style.display = "flex";
-
 
     contenu.innerHTML = `
 
         <p style="color:var(--cyan);">
-
             🔄 Chargement des résultats...
-
         </p>
 
     `;
@@ -1191,11 +1124,15 @@ async function openAdminModal(event) {
        RÉCUPÉRATION DES RÉPONSES
     ================================================= */
 
-    const { data, error } =
-
+    const {
+        data,
+        error
+    } =
         await supabaseClient
 
-            .from("reponses_questionnaire")
+            .from(
+                "reponses_questionnaire"
+            )
 
             .select(
                 "question_id, reponse, created_at"
@@ -1214,16 +1151,17 @@ async function openAdminModal(event) {
         contenu.innerHTML = `
 
             <p style="color:#ff5c7a;">
-
                 ❌ Impossible de récupérer
                 les résultats.
-
             </p>
 
-            <p style="font-size:13px;color:#aaa;">
-
+            <p
+                style="
+                    font-size:13px;
+                    color:#aaa;
+                "
+            >
                 ${escapeHtml(error.message)}
-
             </p>
 
         `;
@@ -1237,15 +1175,16 @@ async function openAdminModal(event) {
        AUCUNE RÉPONSE
     ================================================= */
 
-    if (!data || data.length === 0) {
+    if (
+        !data ||
+        data.length === 0
+    ) {
 
         contenu.innerHTML = `
 
             <p>
-
                 Aucune réponse enregistrée
                 pour le moment.
-
             </p>
 
         `;
@@ -1256,22 +1195,16 @@ async function openAdminModal(event) {
 
 
     /* =================================================
-       CALCUL DU NOMBRE DE PARTICIPANTS
-       
-       Chaque personne répond à 10 questions.
-       Donc :
-       
-       nombre de participants =
-       nombre total de réponses / nombre de questions
+       NOMBRE DE PARTICIPANTS
     ================================================= */
 
     const nombreQuestions =
         questions.length;
 
-
     const nombreParticipants =
         Math.floor(
-            data.length / nombreQuestions
+            data.length /
+            nombreQuestions
         );
 
 
@@ -1338,8 +1271,19 @@ async function openAdminModal(event) {
                 padding:18px;
                 margin-bottom:25px;
                 border-radius:12px;
-                background:rgba(156,108,255,0.10);
-                border:1px solid rgba(156,108,255,0.30);
+                background:rgba(
+                    156,
+                    108,
+                    255,
+                    0.10
+                );
+                border:1px solid
+                    rgba(
+                        156,
+                        108,
+                        255,
+                        0.30
+                    );
             "
         >
 
@@ -1371,7 +1315,8 @@ async function openAdminModal(event) {
                     font-size:12px;
                 "
             >
-                ${data.length} réponses enregistrées
+                ${data.length}
+                réponses enregistrées
             </p>
 
         </div>
@@ -1383,11 +1328,14 @@ async function openAdminModal(event) {
        AFFICHER CHAQUE QUESTION
     ================================================= */
 
-    Object.keys(resultatsParQuestion)
+    Object.keys(
+        resultatsParQuestion
+    )
 
         .sort(
             (a, b) =>
-                Number(a) - Number(b)
+                Number(a) -
+                Number(b)
         )
 
         .forEach(
@@ -1450,8 +1398,9 @@ async function openAdminModal(event) {
                             "
                         >
                             QUESTION
-                            ${String(questionId)
-                                .padStart(2, "0")}
+                            ${String(
+                                questionId
+                            ).padStart(2, "0")}
                         </p>
 
 
@@ -1606,11 +1555,21 @@ async function openAdminModal(event) {
                 border-radius:10px;
                 cursor:pointer;
                 background:
-                    rgba(255,92,122,0.15);
+                    rgba(
+                        255,
+                        92,
+                        122,
+                        0.15
+                    );
                 color:#ff5c7a;
                 border:
                     1px solid
-                    rgba(255,92,122,0.30);
+                    rgba(
+                        255,
+                        92,
+                        122,
+                        0.30
+                    );
                 font-weight:bold;
             "
         >
@@ -1646,9 +1605,7 @@ async function deconnecterAdmin() {
 
     await supabaseClient.auth.signOut();
 
-
     closeAdminModal();
-
 
     alert(
         "Vous êtes maintenant déconnecté."
